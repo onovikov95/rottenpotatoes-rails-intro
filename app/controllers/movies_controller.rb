@@ -14,8 +14,10 @@ class MoviesController < ApplicationController
     sortField = params[:sort_by]
     if sortField=="title"
       @movies= Movie.all.order "title ASC"
+      @title_header = 'hilite'
     elsif sortField=="date"
       @movies = Movie.all.order "release_date ASC"
+      @release_date_header = 'hilite'
     else
       @movies = Movie.all
     end
