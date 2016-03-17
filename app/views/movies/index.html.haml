@@ -22,5 +22,5 @@
   Include:
   - @all_ratings.each do |rating|
     = rating
-    = check_box_tag "ratings[#{rating}]", 1, params[:ratings].has_key?(rating)
+    = check_box_tag "ratings[#{rating}]", 1, params[:ratings].has_key?(rating) || @emptySet
   = submit_tag 'Refresh', {id: "ratings_submit"}

@@ -1,5 +1,5 @@
 class MoviesController < ApplicationController
-
+  
   
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
@@ -13,6 +13,7 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = ['G','PG','PG-13','R']
+    
     sortField = params[:sort_by]
     if params[:ratings] == nil
         ratings = []
@@ -30,7 +31,8 @@ class MoviesController < ApplicationController
       if ratings.length != 0
         @movies = Movie.where(rating: ratings)
       else
-        @movies = []
+        @movies = Movie.all #[]
+        @emptySet = true
       end
     end
   end
