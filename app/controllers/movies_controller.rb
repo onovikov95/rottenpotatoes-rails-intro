@@ -14,27 +14,24 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = ['G','PG','PG-13','R']
     
-    sortField = params[:sort_by]
-    if params[:ratings] == nil
-        ratings = []
-        params[:ratings] = {}
-    else
-        ratings = params[:ratings].keys
+    @sortField = params[:sort_by]
+    if params[:ratings]
+        @ratings = params[:ratings].keys
     end
-    if sortField=="title"
-      @movies= Movie.all.order "title ASC"
-      @title_header = 'hilite'
-    elsif sortField=="date"
-      @movies = Movie.all.order "release_date ASC"
-      @release_date_header = 'hilite'
+    if @sortField
+      @movies= Movie.all.order "#{@sortField} ASC"
+      @sortField == "title" ? @title_header = 'hilite' : @release_date_header = 'hilite'
+      @ratings = {}
     else
-      if ratings.length != 0
-        @movies = Movie.where(rating: ratings)
+      if @ratings
+        @movies = Movie.where(rating: @ratings)
       else
         @movies = Movie.all #[]
-        @emptySet = true
+        @ratings = {'G'=>1,'PG'=>1,'PG-13'=>1,'R'=>1}#@all_ratings
+        redirect_to movies_path(:ratings => @ratings)
       end
     end
+    
   end
 
   def new
