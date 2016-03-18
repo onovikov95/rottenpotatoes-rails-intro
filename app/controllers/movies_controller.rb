@@ -14,24 +14,36 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = ['G','PG','PG-13','R']
     
-    @sortField = params[:sort_by]
-    if params[:ratings]
-        @ratings = params[:ratings].keys
+    if params[:sort_by]
+      @sortField = params[:sort_by]
+    elsif session[:sort_by]
+      redirect = true
+      @sortField = session[:sort_by]
     end
-    if @sortField
-      @movies= Movie.all.order "#{@sortField} ASC"
-      @sortField == "title" ? @title_header = 'hilite' : @release_date_header = 'hilite'
-      @ratings = {}
+    session[:sort_by] = @sortField
+    
+    
+    if params[:ratings]
+      @ratings = params[:ratings]
+    elsif session[:ratings]
+      redirect = true
+      @ratings = session[:ratings]
     else
-      if @ratings
-        @movies = Movie.where(rating: @ratings)
-      else
-        @movies = Movie.all #[]
-        @ratings = {'G'=>1,'PG'=>1,'PG-13'=>1,'R'=>1}#@all_ratings
-        redirect_to movies_path(:ratings => @ratings)
-      end
+      @ratings = {'G'=>1,'PG'=>1,'PG-13'=>1,'R'=>1}
+      redirect = true
+    end
+    session[:ratings] = @ratings
+    
+    if @sortField
+      @movies= Movie.where(rating: @ratings.keys).order "#{@sortField} ASC"
+      @sortField == "title" ? @title_header = 'hilite' : @release_date_header = 'hilite'
+    else
+        @movies = Movie.where(rating: @ratings.keys)
     end
     
+    if redirect
+      redirect_to movies_path(:sort_by => @sortField, :ratings => @ratings)
+    end
   end
 
   def new
